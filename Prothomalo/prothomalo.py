@@ -61,7 +61,7 @@ def scrap_data_using_json_schema(pages_df):
     
     return "ok"
 
-guardian_news = scrap_data_using_json_schema(data_links)
+scrap_news = scrap_data_using_json_schema(data_links)
 csv_file.close()
 
 # Load the dataset to verify
