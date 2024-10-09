@@ -6,7 +6,7 @@ import newspaper
 from datetime import datetime, timedelta
 import time
 import csv
-import random
+import random 
 from requests.packages.urllib3.exceptions import InsecureRequestWarning
 
 # Disable SSL warnings
@@ -89,7 +89,7 @@ def scrape_articles(pages_df, csv_writer):
 # Main execution block
 
 # Set date range
-start_date = datetime.strptime('2024-08-05', '%Y-%m-%d')
+start_date = datetime.strptime('2024-09-05', '%Y-%m-%d')
 end_date = datetime.now() - timedelta(days=1)  # Yesterday
 
 # Generate date list
