@@ -8,3 +8,7 @@ class SourceNotSupportedError(ScraperError):
 
 class JobNotFoundError(Exception):
     """Raised when a job cannot be found in the store."""
+
+
+class JobQueueFullError(Exception):
+    """Raised when the job queue is at capacity."""

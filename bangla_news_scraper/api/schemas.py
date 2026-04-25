@@ -1,6 +1,6 @@
 from datetime import date, datetime
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 from bangla_news_scraper.models import JobInfo, JobStatus, SourceName
 
@@ -10,6 +10,12 @@ class JobCreateRequest(BaseModel):
     start_date: date
     end_date: date
     max_articles: int = Field(default=100, ge=1, le=500)
+
+    @model_validator(mode="after")
+    def validate_date_range(self) -> "JobCreateRequest":
+        if self.end_date < self.start_date:
+            raise ValueError("end_date must not be earlier than start_date")
+        return self
 
 
 class JobResponse(BaseModel):
@@ -25,6 +31,7 @@ class JobResponse(BaseModel):
     started_at: datetime | None
     finished_at: datetime | None
     error: str | None
+    error_code: str | None
 
 
 class JobPathResponse(BaseModel):
@@ -51,4 +58,5 @@ def build_job_response(job: JobInfo) -> JobResponse:
         started_at=job.started_at,
         finished_at=job.finished_at,
         error=job.error,
+        error_code=getattr(job, "error_code", None),
     )

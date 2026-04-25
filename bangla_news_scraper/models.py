@@ -80,3 +80,4 @@ class JobInfo:
     finished_at: datetime | None = None
     row_count: int = 0
     error: str | None = None
+    error_code: str | None = None
