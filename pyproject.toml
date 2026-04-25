@@ -1,0 +1,35 @@
+[project]
+name = "bangla-news-scraper"
+version = "0.1.0"
+description = "CSV-first Bangla news scraping with FastAPI trigger API"
+readme = "README.md"
+authors = [
+    { name = "Aber Islam", email = "aber.islam.dev@gmail.com" }
+]
+requires-python = ">=3.14"
+dependencies = [
+    "beautifulsoup4>=4.14.3",
+    "fastapi>=0.136.1",
+    "lxml>=6.1.0",
+    "pydantic-settings>=2.14.0",
+    "python-dateutil>=2.9.0.post0",
+    "requests>=2.33.1",
+    "uvicorn[standard]>=0.46.0",
+]
+
+[project.scripts]
+bangla-news-scraper = "bangla_news_scraper.cli:main"
+
+[build-system]
+requires = ["setuptools>=75.0"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["bangla_news_scraper*"]
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.0.3",
+    "ruff>=0.15.12",
+]
