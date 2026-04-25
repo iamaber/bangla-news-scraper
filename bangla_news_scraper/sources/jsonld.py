@@ -14,9 +14,11 @@ def extract_jsonld_article(soup: BeautifulSoup) -> dict | None:
             continue
         items = data if isinstance(data, list) else [data]
         for item in items:
-            if isinstance(item, dict) and item.get("@type") in (
-                "NewsArticle",
-                "Article",
-            ):
+            if not isinstance(item, dict):
+                continue
+            types = item.get("@type", [])
+            if isinstance(types, str):
+                types = [types]
+            if any(t in ("NewsArticle", "Article") for t in types):
                 return item
     return None

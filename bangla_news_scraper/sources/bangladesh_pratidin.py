@@ -38,7 +38,7 @@ def _parse_bd_pratidin_article(url: str, html: str) -> ArticleRecord | None:
     return ArticleRecord(
         source="bangladesh-pratidin",
         url=url,
-        date_published=str(date_pub) if date_pub else "",
+        date_published=date_pub or "",
         headline=headline,
         article_body=body,
     )

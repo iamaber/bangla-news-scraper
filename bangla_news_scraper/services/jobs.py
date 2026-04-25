@@ -10,10 +10,25 @@ from bangla_news_scraper.services.csv_writer import write_articles_to_csv
 from bangla_news_scraper.sources.registry import create_scraper
 
 
+MAX_COMPLETED_JOBS = 1000
+
+
 class JobService:
     def __init__(self) -> None:
         self._jobs: dict[str, JobInfo] = {}
         self._lock = threading.Lock()
+
+    def _evict_old_jobs(self) -> None:
+        finished = [
+            (jid, j)
+            for jid, j in self._jobs.items()
+            if j.status in (JobStatus.SUCCEEDED, JobStatus.FAILED)
+        ]
+        if len(finished) <= MAX_COMPLETED_JOBS:
+            return
+        finished.sort(key=lambda pair: pair[1].finished_at or datetime.min.replace(tzinfo=UTC))
+        for jid, _ in finished[: len(finished) - MAX_COMPLETED_JOBS]:
+            del self._jobs[jid]
 
     def start_job(self, request: ScrapeJobRequest) -> JobInfo:
         created_at = datetime.now(UTC)
@@ -66,12 +81,13 @@ class JobService:
                 request_timeout_seconds=settings.request_timeout_seconds,
                 user_agent=settings.user_agent,
             )
-            articles = list(scraper.scrape(config))
+            articles = scraper.scrape(config)
             rows = write_articles_to_csv(job.csv_path, articles)
             with self._lock:
                 job.row_count = rows
                 job.status = JobStatus.SUCCEEDED
                 job.finished_at = datetime.now(UTC)
+                self._evict_old_jobs()
         except Exception as error:
             with self._lock:
                 job.status = JobStatus.FAILED
